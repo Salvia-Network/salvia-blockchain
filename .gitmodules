@@ -1,0 +1,8 @@
+[submodule "salvia-blockchain-gui"]
+	path = salvia-blockchain-gui
+	url = https://github.com/Salvia-Network/salvia-blockchain-gui.git
+	branch = pools
+[submodule "mozilla-ca"]
+	path = mozilla-ca
+	url = https://github.com/Chia-Network/mozilla-ca.git
+        branch = main
