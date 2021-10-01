@@ -1,12 +1,13 @@
 name: Windows Installer on Windows 10 and Python 3.9
 
 on:
-  create:
+  push:
     tags:
-      - v*
+      - '*'
 
 jobs:
   build:
+    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
     name: Windows Installer on Windows 10 and Python 3.9
     runs-on: [windows-latest]
     timeout-minutes: 40
