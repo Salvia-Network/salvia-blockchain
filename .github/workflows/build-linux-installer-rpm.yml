@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+    if: ${{ startsWith(github.ref, 'refs/tags/') }}
     name: Linux .rpm installer on Python 3.9
     runs-on: ubuntu-latest
     container:
