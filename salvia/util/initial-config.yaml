@@ -82,7 +82,7 @@ network_overrides: &network_overrides
       address_prefix: "txslv"
     testnet7:
       address_prefix: "txslv"
-      default_full_node_port: 518520
+      default_full_node_port: 17854
 
 selected_network: &selected_network "mainnet"
 ALERTS_URL: https://download.salvianetwork.net/notify/mainnet_alert.txt

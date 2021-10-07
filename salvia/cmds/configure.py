@@ -92,7 +92,7 @@ def configure(
     if testnet is not None:
         if testnet == "true" or testnet == "t":
             print("Setting Testnet")
-            testnet_port = "58444"
+            testnet_port = "17854"
             testnet_introducer = "beta1_introducer.salvianetwork.net"
             testnet_dns_introducer = "dns-introducer-testnet7.salvianetwork.net"
             testnet = "testnet7"
@@ -119,7 +119,7 @@ def configure(
 
         elif testnet == "false" or testnet == "f":
             print("Setting Mainnet")
-            mainnet_port = "8444"
+            mainnet_port = "18520"
             mainnet_introducer = "introducer.salvianetwork.net"
             mainnet_dns_introducer = "dns-introducer.salvianetwork.net"
             net = "mainnet"
