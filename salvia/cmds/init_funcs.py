@@ -25,7 +25,7 @@ from salvia.util.config import (
 from salvia.util.ints import uint32
 from salvia.util.keychain import Keychain
 from salvia.util.path import mkdir
-from salvia.util.ssl import (
+from salvia.util.ssl_check import (
     DEFAULT_PERMISSIONS_CERT_FILE,
     DEFAULT_PERMISSIONS_KEY_FILE,
     RESTRICT_MASK_CERT_FILE,

@@ -2,30 +2,17 @@
 
 import click
 import colorama
-import os
-import sys
 import threading
 import yaml
 
-# Fix module resolution issue between salvia/util/ssl.py and `import ssl`
-# aiohttp imports ssl, which incorrectly finds salvia/util/ssl.py. As a
-# workaround, we'll place salvia/util at the end of sys.path
-search_path = os.path.dirname(os.path.abspath(sys.argv[0]))
-try:
-    index = sys.path.index(search_path)
-    sys.path.append(sys.path.pop(index))
-except Exception:
-    pass
-
-if True:  # noqa: E402
-    from salvia.cmds.passphrase_funcs import prompt_for_passphrase, read_passphrase_from_file
-    from salvia.util.default_root import DEFAULT_KEYS_ROOT_PATH
-    from salvia.util.file_keyring import FileKeyring
-    from salvia.util.keyring_wrapper import DEFAULT_PASSPHRASE_IF_NO_MASTER_PASSPHRASE, KeyringWrapper
-    from cryptography.exceptions import InvalidTag
-    from io import TextIOWrapper
-    from pathlib import Path
-    from typing import Any, Dict, Optional
+from salvia.cmds.passphrase_funcs import prompt_for_passphrase, read_passphrase_from_file
+from salvia.util.default_root import DEFAULT_KEYS_ROOT_PATH
+from salvia.util.file_keyring import FileKeyring
+from salvia.util.keyring_wrapper import DEFAULT_PASSPHRASE_IF_NO_MASTER_PASSPHRASE, KeyringWrapper
+from cryptography.exceptions import InvalidTag
+from io import TextIOWrapper
+from pathlib import Path
+from typing import Any, Dict, Optional
 
 DEFAULT_KEYRING_YAML = DEFAULT_KEYS_ROOT_PATH / "keyring.yaml"
 

@@ -21,13 +21,14 @@ from salvia.types.condition_with_args import ConditionWithArgs
 from salvia.types.spend_bundle import SpendBundle
 from salvia.types.mempool_item import MempoolItem
 from salvia.util.clvm import int_to_bytes
-from salvia.util.condition_tools import conditions_for_solution
+from salvia.util.condition_tools import conditions_for_solution, pkm_pairs
 from salvia.util.errors import Err
 from salvia.util.ints import uint64
 from salvia.util.hash import std_hash
 from salvia.types.mempool_inclusion_status import MempoolInclusionStatus
 from salvia.util.api_decorators import api_request, peer_required, bytes_required
 from salvia.full_node.mempool_check_conditions import get_name_puzzle_conditions
+from salvia.types.name_puzzle_condition import NPC
 from salvia.full_node.pending_tx_cache import PendingTxCache
 from blspy import G2Element
 
@@ -42,6 +43,7 @@ from salvia.types.blockchain_format.program import SerializedProgram
 from clvm_tools import binutils
 from salvia.types.generator_types import BlockGenerator
 from clvm.casts import int_from_bytes
+from blspy import G1Element
 
 BURN_PUZZLE_HASH = b"0" * 32
 BURN_PUZZLE_HASH_2 = b"1" * 32
@@ -2220,3 +2222,83 @@ class TestMaliciousGenerators:
         assert spend_bundle is not None
         res = await full_node_1.full_node.respond_transaction(new_bundle, new_bundle.name())
         assert res == (MempoolInclusionStatus.FAILED, Err.INVALID_SPEND_BUNDLE)
+
+
+class TestPkmPairs:
+
+    h1 = b"a" * 32
+    h2 = b"b" * 32
+    h3 = b"c" * 32
+    h4 = b"d" * 32
+
+    pk1 = G1Element.generator()
+    pk2 = G1Element.generator()
+
+    CCA = ConditionOpcode.CREATE_COIN_ANNOUNCEMENT
+    CC = ConditionOpcode.CREATE_COIN
+    ASM = ConditionOpcode.AGG_SIG_ME
+    ASU = ConditionOpcode.AGG_SIG_UNSAFE
+
+    def test_empty_list(self):
+        npc_list = []
+        pks, msgs = pkm_pairs(npc_list, b"foobar")
+        assert pks == []
+        assert msgs == []
+
+    def test_no_agg_sigs(self):
+        npc_list = [
+            NPC(self.h1, self.h2, [(self.CCA, [ConditionWithArgs(self.CCA, [b"msg"])])]),
+            NPC(self.h3, self.h4, [(self.CC, [ConditionWithArgs(self.CCA, [self.h1, bytes([1])])])]),
+        ]
+        pks, msgs = pkm_pairs(npc_list, b"foobar")
+        assert pks == []
+        assert msgs == []
+
+    def test_agg_sig_me(self):
+        npc_list = [
+            NPC(
+                self.h1,
+                self.h2,
+                [
+                    (
+                        self.ASM,
+                        [
+                            ConditionWithArgs(self.ASM, [bytes(self.pk1), b"msg1"]),
+                            ConditionWithArgs(self.ASM, [bytes(self.pk2), b"msg2"]),
+                        ],
+                    )
+                ],
+            )
+        ]
+        pks, msgs = pkm_pairs(npc_list, b"foobar")
+        assert pks == [self.pk1, self.pk2]
+        assert msgs == [b"msg1" + self.h1 + b"foobar", b"msg2" + self.h1 + b"foobar"]
+
+    def test_agg_sig_unsafe(self):
+        npc_list = [
+            NPC(
+                self.h1,
+                self.h2,
+                [
+                    (
+                        self.ASU,
+                        [
+                            ConditionWithArgs(self.ASU, [bytes(self.pk1), b"msg1"]),
+                            ConditionWithArgs(self.ASU, [bytes(self.pk2), b"msg2"]),
+                        ],
+                    )
+                ],
+            )
+        ]
+        pks, msgs = pkm_pairs(npc_list, b"foobar")
+        assert pks == [self.pk1, self.pk2]
+        assert msgs == [b"msg1", b"msg2"]
+
+    def test_agg_sig_mixed(self):
+        npc_list = [
+            NPC(self.h1, self.h2, [(self.ASM, [ConditionWithArgs(self.ASM, [bytes(self.pk1), b"msg1"])])]),
+            NPC(self.h1, self.h2, [(self.ASU, [ConditionWithArgs(self.ASU, [bytes(self.pk2), b"msg2"])])]),
+        ]
+        pks, msgs = pkm_pairs(npc_list, b"foobar")
+        assert pks == [self.pk1, self.pk2]
+        assert msgs == [b"msg1" + self.h1 + b"foobar", b"msg2"]
