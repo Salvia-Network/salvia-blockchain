@@ -14,6 +14,7 @@ from salvia.cmds.start import start_cmd
 from salvia.cmds.stop import stop_cmd
 from salvia.cmds.wallet import wallet_cmd
 from salvia.cmds.plotnft import plotnft_cmd
+from salvia.cmds.plotters import plotters_cmd
 from salvia.util.default_root import DEFAULT_KEYS_ROOT_PATH, DEFAULT_ROOT_PATH
 from salvia.util.keychain import set_keys_root_path, supports_keyring_passphrase
 from salvia.util.ssl_check import check_ssl
@@ -118,6 +119,7 @@ cli.add_command(start_cmd)
 cli.add_command(stop_cmd)
 cli.add_command(netspace_cmd)
 cli.add_command(farm_cmd)
+cli.add_command(plotters_cmd)
 
 if supports_keyring_passphrase():
     cli.add_command(passphrase_cmd)

@@ -4,9 +4,9 @@ dependencies = [
     "blspy==1.0.6",  # Signature library
     "chiavdf==1.0.3",  # timelord and vdf verification
     "chiabip158==1.0",  # bip158-style wallet filters
-    "chiapos==1.0.4",  # proof of space
+    "chiapos==1.0.6",  # proof of space
     "clvm==0.9.7",
-    "clvm_rs==0.1.14",
+    "clvm_rs==0.1.15",
     "clvm_tools==0.4.3",
     "aiohttp==3.7.4",  # HTTP server for full node rpc
     "aiosqlite==0.17.0",  # asyncio wrapper for sqlite, to store blocks
@@ -72,6 +72,7 @@ kwargs = dict(
         "salvia.farmer",
         "salvia.harvester",
         "salvia.introducer",
+        "salvia.plotters",
         "salvia.plotting",
         "salvia.pools",
         "salvia.protocols",
