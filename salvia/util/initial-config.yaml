@@ -19,7 +19,7 @@ network_overrides: &network_overrides
       GENESIS_PRE_FARM_POOL_PUZZLE_HASH: 86f83e6488b1ab859e3ce5beb6fca3dec3ee2f9b0e01d57605cc61da72aeb195
       MIN_PLOT_SIZE: 18
       NETWORK_TYPE: 1
-      MEMPOOL_BLOCK_BUFFER: 10
+      MEMPOOL_BLOCK_BUFFER: 50
       EPOCH_BLOCKS: 768
       DIFFICULTY_STARTING: 30
   config:

@@ -6,6 +6,7 @@ import aiohttp
 from blspy import AugSchemeMPL, G2Element, PrivateKey
 
 import salvia.server.ws_connection as ws
+from salvia import __version__
 from salvia.consensus.network_type import NetworkType
 from salvia.consensus.pot_iterations import calculate_iterations_quality, calculate_sp_interval_iters
 from salvia.farmer.farmer import Farmer
@@ -233,6 +234,7 @@ class FarmerAPI:
                             f"{pool_url}/partial",
                             json=post_partial_request.to_json_dict(),
                             ssl=ssl_context_for_root(get_mozilla_ca_crt(), log=self.farmer.log),
+                            headers={"User-Agent": f"Salvia Blockchain v.{__version__}"},
                         ) as resp:
                             if resp.ok:
                                 pool_response: Dict = json.loads(await resp.text())
