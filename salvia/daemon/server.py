@@ -100,6 +100,9 @@ if getattr(sys, "frozen", False):
         "salvia_timelord": "start_timelord",
         "salvia_timelord_launcher": "timelord_launcher",
         "salvia_full_node_simulator": "start_simulator",
+        "salvia_seeder": "salvia_seeder",
+        "salvia_seeder_crawler": "salvia_seeder_crawler",
+        "salvia_seeder_dns": "salvia_seeder_dns",
     }
 
     def executable_for_service(service_name: str) -> str:

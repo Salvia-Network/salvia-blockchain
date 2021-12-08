@@ -10,8 +10,8 @@ import aiohttp
 from salvia.cmds.units import units
 from salvia.rpc.wallet_rpc_client import WalletRpcClient
 from salvia.server.start_wallet import SERVICE_NAME
+from salvia.types.blockchain_format.sized_bytes import bytes32
 from salvia.util.bech32m import encode_puzzle_hash
-from salvia.util.byte_types import hexstr_to_bytes
 from salvia.util.config import load_config
 from salvia.util.default_root import DEFAULT_ROOT_PATH
 from salvia.util.ints import uint16, uint64
@@ -35,7 +35,7 @@ def print_transaction(tx: TransactionRecord, verbose: bool, name) -> None:
 
 async def get_transaction(args: dict, wallet_client: WalletRpcClient, fingerprint: int) -> None:
     wallet_id = args["id"]
-    transaction_id = hexstr_to_bytes(args["tx_id"])
+    transaction_id = bytes32.from_hexstr(args["tx_id"])
     config = load_config(DEFAULT_ROOT_PATH, "config.yaml", SERVICE_NAME)
     name = config["network_overrides"]["config"][config["selected_network"]]["address_prefix"]
     tx: TransactionRecord = await wallet_client.get_transaction(wallet_id, transaction_id=transaction_id)
