@@ -24,7 +24,7 @@ from salvia.util.config import (
 )
 from salvia.util.ints import uint32
 from salvia.util.keychain import Keychain
-from salvia.util.path import mkdir
+from salvia.util.path import mkdir, path_from_root
 from salvia.util.ssl_check import (
     DEFAULT_PERMISSIONS_CERT_FILE,
     DEFAULT_PERMISSIONS_KEY_FILE,
@@ -255,7 +255,13 @@ def copy_cert_files(cert_path: Path, new_path: Path):
         check_and_fix_permissions_for_ssl_file(new_path_child, RESTRICT_MASK_KEY_FILE, DEFAULT_PERMISSIONS_KEY_FILE)
 
 
-def init(create_certs: Optional[Path], root_path: Path, fix_ssl_permissions: bool = False, testnet: bool = False):
+def init(
+    create_certs: Optional[Path],
+    root_path: Path,
+    fix_ssl_permissions: bool = False,
+    testnet: bool = False,
+    experimental_v2_db: bool = False,
+):
     if create_certs is not None:
         if root_path.exists():
             if os.path.isdir(create_certs):
@@ -272,7 +278,13 @@ def init(create_certs: Optional[Path], root_path: Path, fix_ssl_permissions: boo
             print(f"** {root_path} does not exist. Executing core init **")
             # sanity check here to prevent infinite recursion
             if (
-                salvia_init(root_path, fix_ssl_permissions=fix_ssl_permissions, testnet=testnet) == 0
+                salvia_init(
+                    root_path,
+                    fix_ssl_permissions=fix_ssl_permissions,
+                    testnet=testnet,
+                    experimental_v2_db=experimental_v2_db,
+                )
+                == 0
                 and root_path.exists()
             ):
                 return init(create_certs, root_path, fix_ssl_permissions)
@@ -280,7 +292,9 @@ def init(create_certs: Optional[Path], root_path: Path, fix_ssl_permissions: boo
             print(f"** {root_path} was not created. Exiting **")
             return -1
     else:
-        return salvia_init(root_path, fix_ssl_permissions=fix_ssl_permissions, testnet=testnet)
+        return salvia_init(
+            root_path, fix_ssl_permissions=fix_ssl_permissions, testnet=testnet, experimental_v2_db=experimental_v2_db
+        )
 
 
 def salvia_version_number() -> Tuple[str, str, str, str]:
@@ -343,7 +357,12 @@ def salvia_full_version_str() -> str:
 
 
 def salvia_init(
-    root_path: Path, *, should_check_keys: bool = True, fix_ssl_permissions: bool = False, testnet: bool = False
+    root_path: Path,
+    *,
+    should_check_keys: bool = True,
+    fix_ssl_permissions: bool = False,
+    testnet: bool = False,
+    experimental_v2_db: bool = False,
 ):
     """
     Standard first run initialization or migration steps. Handles config creation,
@@ -381,6 +400,18 @@ def salvia_init(
         fix_ssl(root_path)
     if should_check_keys:
         check_keys(root_path)
+    if experimental_v2_db:
+        config: Dict = load_config(root_path, "config.yaml")["full_node"]
+        db_path_replaced: str = config["database_path"].replace("CHALLENGE", config["selected_network"])
+        db_path = path_from_root(root_path, db_path_replaced)
+        mkdir(db_path.parent)
+        import sqlite3
+
+        with sqlite3.connect(db_path) as connection:
+            connection.execute("CREATE TABLE database_version(version int)")
+            connection.execute("INSERT INTO database_version VALUES (2)")
+            connection.commit()
+
     print("")
     print("To see your keys, run 'salvia keys show --show-mnemonic-seed'")
 

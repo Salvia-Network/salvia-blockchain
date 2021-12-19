@@ -160,8 +160,10 @@ full_node:
   db_sync: auto
   allow_database_upgrades: False
   database_path: db/blockchain_v1_CHALLENGE.sqlite
+  peer_db_path: db/peer_table_node.sqlite
   peers_file_path: db/peers.dat
   simulator_database_path: sim_db/simulator_blockchain_v1_CHALLENGE.sqlite
+  simulator_peer_db_path: sim_db/peer_table_node.sqlite
   simulator_peers_file_path: sim_db/peer_table_node.dat
   start_rpc_server: True
   rpc_port: 18530
@@ -243,6 +245,7 @@ wallet:
     port: 18520
   testing: False
   database_path: wallet/db/blockchain_wallet_v1_CHALLENGE_KEY.sqlite
+  wallet_peers_path: wallet/db/wallet_peers.sqlite
   wallet_peers_file_path: wallet/db/wallet_peers.dat
   logging: *logging
   network_overrides: *network_overrides

@@ -1,7 +1,7 @@
 from typing import KeysView, Generator
 
 SERVICES_FOR_GROUP = {
-    "all": ("salvia_harvester salvia_timelord_launcher salvia_timelord " "salvia_farmer salvia_full_node salvia_wallet").split(),
+    "all": "salvia_harvester salvia_timelord_launcher salvia_timelord salvia_farmer salvia_full_node salvia_wallet".split(),
     "node": "salvia_full_node".split(),
     "harvester": "salvia_harvester".split(),
     "farmer": "salvia_harvester salvia_farmer salvia_full_node salvia_wallet".split(),

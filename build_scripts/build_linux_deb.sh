@@ -26,6 +26,7 @@ echo "Salvia Installer Version is: $SALVIA_INSTALLER_VERSION"
 echo "Installing npm and electron packagers"
 npm install electron-packager -g
 npm install electron-installer-debian -g
+npm install lerna -g
 
 echo "Create dist/"
 rm -rf dist
@@ -41,13 +42,15 @@ if [ "$LAST_EXIT_CODE" -ne 0 ]; then
 	exit $LAST_EXIT_CODE
 fi
 
-cp -r dist/daemon ../salvia-blockchain-gui
+cp -r dist/daemon ../salvia-blockchain-gui/packages/gui
 cd .. || exit
 cd salvia-blockchain-gui || exit
 
 echo "npm build"
+lerna clean -y
 npm install
-npm audit fix
+# Audit fix does not currently work with Lerna. See https://github.com/lerna/lerna/issues/1663
+# npm audit fix
 npm run build
 LAST_EXIT_CODE=$?
 if [ "$LAST_EXIT_CODE" -ne 0 ]; then
@@ -55,13 +58,16 @@ if [ "$LAST_EXIT_CODE" -ne 0 ]; then
 	exit $LAST_EXIT_CODE
 fi
 
+# Change to the gui package
+cd packages/gui || exit
+
 # sets the version for salvia-blockchain in package.json
 cp package.json package.json.orig
 jq --arg VER "$SALVIA_INSTALLER_VERSION" '.version=$VER' package.json > temp.json && mv temp.json package.json
 
 electron-packager . salvia-blockchain --asar.unpack="**/daemon/**" --platform=linux \
 --icon=src/assets/img/Salvia.icns --overwrite --app-bundle-id=net.salvia.blockchain \
---appVersion=$SALVIA_INSTALLER_VERSION
+--appVersion=$SALVIA_INSTALLER_VERSION --executable-name=salvia-blockchain
 LAST_EXIT_CODE=$?
 
 # reset the package.json to the original
@@ -72,14 +78,14 @@ if [ "$LAST_EXIT_CODE" -ne 0 ]; then
 	exit $LAST_EXIT_CODE
 fi
 
-mv $DIR_NAME ../build_scripts/dist/
-cd ../build_scripts || exit
+mv $DIR_NAME ../../../build_scripts/dist/
+cd ../../../build_scripts || exit
 
 echo "Create salvia-$SALVIA_INSTALLER_VERSION.deb"
 rm -rf final_installer
 mkdir final_installer
 electron-installer-debian --src dist/$DIR_NAME/ --dest final_installer/ \
---arch "$PLATFORM" --options.version $SALVIA_INSTALLER_VERSION
+--arch "$PLATFORM" --options.version $SALVIA_INSTALLER_VERSION --options.bin salvia-blockchain --options.name salvia-blockchain
 LAST_EXIT_CODE=$?
 if [ "$LAST_EXIT_CODE" -ne 0 ]; then
 	echo >&2 "electron-installer-debian failed!"

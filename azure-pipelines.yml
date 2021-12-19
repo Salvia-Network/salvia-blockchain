@@ -22,6 +22,7 @@ variables:
   - group: Apple-Notarize-Variables
   - group: AWS-Upload-Credentials
   - group: GlueVariables
+  - group: GitHub
 
 steps:
   - checkout: self  # self represents the repo where the initial Azure Pipelines YAML file was found
@@ -58,11 +59,12 @@ steps:
     displayName: Create installer version number
 
   - script: |
-      MADMAX_VERSION=$(curl --silent "https://api.github.com/repos/Salvia-Network/salvia-plotter-madmax/releases/latest" | jq -r '.tag_name')
+      set -o errexit -o pipefail
+      MADMAX_VERSION=$(curl -u "$(GithubUsername):$(GithubToken)" --fail --silent "https://api.github.com/repos/Chia-Network/chia-plotter-madmax/releases/latest" | jq -r '.tag_name')
 
       mkdir "$(System.DefaultWorkingDirectory)/madmax"
-      wget -O "$(System.DefaultWorkingDirectory)/madmax/salvia_plot" https://github.com/Salvia-Network/salvia-plotter-madmax/releases/download/${MADMAX_VERSION}/salvia_plot-${MADMAX_VERSION}-macos-intel
-      wget -O "$(System.DefaultWorkingDirectory)/madmax/salvia_plot_k34" https://github.com/Salvia-Network/salvia-plotter-madmax/releases/download/${MADMAX_VERSION}/salvia_plot_k34-${MADMAX_VERSION}-macos-intel
+      wget -O "$(System.DefaultWorkingDirectory)/madmax/salvia_plot" https://github.com/Chia-Network/chia-plotter-madmax/releases/download/${MADMAX_VERSION}/chia_plot-${MADMAX_VERSION}-macos-intel
+      wget -O "$(System.DefaultWorkingDirectory)/madmax/salvia_plot_k34" https://github.com/Chia-Network/chia-plotter-madmax/releases/download/${MADMAX_VERSION}/chia_plot_k34-${MADMAX_VERSION}-macos-intel
       chmod +x "$(System.DefaultWorkingDirectory)/madmax/salvia_plot"
       chmod +x "$(System.DefaultWorkingDirectory)/madmax/salvia_plot_k34"
     displayName: "Get latest madmax release"
@@ -73,8 +75,8 @@ steps:
 
   - task: NodeTool@0
     inputs:
-      versionSpec: '14.x'
-    displayName: "Setup Node 14.x"
+      versionSpec: '16.x'
+    displayName: "Setup Node 16.x"
 
   - bash: |
       . ./activate
