@@ -96,7 +96,7 @@ def configure(
         if testnet == "true" or testnet == "t":
             print("Updating Salvia Seeder to testnet settings")
             port = 58444
-            network = "testnet7"
+            network = "testnet10"
             bootstrap = ["testnet-node.salvianetwork.net"]
 
             config["seeder"]["port"] = port

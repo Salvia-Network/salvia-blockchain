@@ -8,12 +8,10 @@ from salvia.types.blockchain_format.program import Program, SerializedProgram
 wallet_program_files = set(
     [
         "salvia/wallet/puzzles/calculate_synthetic_public_key.clvm",
-        "salvia/wallet/puzzles/cc.clvm",
+        "salvia/wallet/puzzles/cat.clvm",
         "salvia/wallet/puzzles/salvialisp_deserialisation.clvm",
         "salvia/wallet/puzzles/rom_bootstrap_generator.clvm",
         "salvia/wallet/puzzles/generator_for_single_coin.clvm",
-        "salvia/wallet/puzzles/genesis-by-coin-id-with-0.clvm",
-        "salvia/wallet/puzzles/genesis-by-puzzle-hash-with-0.clvm",
         "salvia/wallet/puzzles/lock.inner.puzzle.clvm",
         "salvia/wallet/puzzles/p2_conditions.clvm",
         "salvia/wallet/puzzles/p2_delegated_conditions.clvm",
@@ -37,6 +35,14 @@ wallet_program_files = set(
         "salvia/wallet/puzzles/pool_member_innerpuz.clvm",
         "salvia/wallet/puzzles/singleton_launcher.clvm",
         "salvia/wallet/puzzles/p2_singleton_or_delayed_puzhash.clvm",
+        "salvia/wallet/puzzles/genesis_by_puzzle_hash.clvm",
+        "salvia/wallet/puzzles/everything_with_signature.clvm",
+        "salvia/wallet/puzzles/delegated_tail.clvm",
+        "salvia/wallet/puzzles/settlement_payments.clvm",
+        "salvia/wallet/puzzles/genesis_by_coin_id.clvm",
+        "salvia/wallet/puzzles/genesis-by-puzzle-hash-with-0.clvm",
+        "salvia/wallet/puzzles/delegated_genesis_checker.clvm",
+        "salvia/wallet/puzzles/genesis-by-coin-id-with-0.clvm",
     ]
 )
 
