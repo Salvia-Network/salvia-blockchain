@@ -115,7 +115,7 @@ jobs:
         echo "::set-output name=SALVIA_INSTALLER_VERSION::$(python ./build_scripts/installer-version.py)"
 
     - name: Setup Node 14.x
-      uses: actions/setup-node@v2.4.1
+      uses: actions/setup-node@v3.4.0
       with:
         node-version: '14.x'
 
